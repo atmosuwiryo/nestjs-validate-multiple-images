@@ -1,8 +1,9 @@
 import {
+  BadRequestException,
   Body,
   Controller,
-  Get,
   Post,
+  Req,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -41,7 +42,11 @@ export class AppController {
   postImages(
     @Body() uploadImagesDto: uploadImagesDto,
     @UploadedFiles() productImages: Express.Multer.File[],
+    @Req() req: any,
   ): any {
+    if (req.FileValidationError) {
+      throw new BadRequestException(req.FileValidationError);
+    }
     return {
       productName: uploadImagesDto.productName,
       productImages: productImages.map((image) => [
